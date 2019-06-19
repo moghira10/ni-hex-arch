@@ -1,23 +1,32 @@
-# Dockerfile References: https://docs.docker.com/engine/reference/builder/
+FROM golang:1.11-alpine AS builder
 
-# Start from golang v1.11 base image
-FROM golang:1.11
-
+RUN apk update && apk add --no-cache git
 # Set the Current Working Directory inside the container
 WORKDIR $GOPATH/src/github.com/ni
-
-# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
+# Copy everything from the current directory to the present working directory inside the container
 COPY . .
 
+# Enable GO111MODULE
+ENV GO111MODULE=on
 # Download all the dependencies
-# https://stackoverflow.com/questions/28031603/what-do-three-dots-mean-in-go-command-line-invocations
-RUN go get -d -v ./...
+# RUN go get -d -v ./...
 
-# Install the package
-RUN go install -v ./...
+# # Install the package
+# RUN go install -v ./...
 
-# This container exposes port 8080 to the outside world
-EXPOSE 8080
+RUN go mod download
 
-# Run the executable
-CMD ["ni"]
+
+# Build the binary
+RUN CGO_ENABLED=0 GOOS=linux go build  -ldflags="-w -s" -a -installsuffix cgo -o /ni main.go
+
+# EXPOSE 8080
+
+
+FROM scratch
+# Copy our static executable.
+COPY --from=builder /ni /ni
+# Run
+ENTRYPOINT ["/ni"]
+
+# CMD ["ni"]

@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
 type CheckinHandler interface {
@@ -24,6 +26,10 @@ func NewHandler(checkinService Service) CheckinHandler {
 func WriteResponse(w http.ResponseWriter, code int, response interface{}) {
 	w.Header().Set("Content-type", "application/json")
 	w.WriteHeader(code)
+	defer func() {
+		logger := log.New(os.Stdout, "httpResp: ", log.LstdFlags)
+		logger.Println(code, response)
+	}()
 	json.NewEncoder(w).Encode(response)
 }
 
@@ -59,6 +65,7 @@ func (c *CheckIn) IsValid() (bool, error) {
 func (c *checkinHandler) AddCheckIn(w http.ResponseWriter, r *http.Request) {
 	var chkin CheckIn
 
+	data := make([]byte, 50)
 	data, ioErr := ioutil.ReadAll(r.Body)
 
 	if ioErr != nil {
@@ -82,12 +89,10 @@ func (c *checkinHandler) AddCheckIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err := c.checkinService.AddCheckIn(chkin)
-
 	if err != nil {
 		WriteResponse(w, http.StatusInternalServerError, err)
 		return
 	}
-
 	WriteResponse(w, http.StatusOK, chkin)
 	return
 }

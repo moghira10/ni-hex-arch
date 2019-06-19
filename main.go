@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/pprof"
 	"os"
 	"time"
 
@@ -25,7 +26,7 @@ func main() {
 	checkinService := checkin.NewService(checkinRepo)
 	checkinHandler := checkin.NewHandler(checkinService)
 
-	logger := log.New(os.Stdout, "http: ", log.LstdFlags)
+	logger := log.New(os.Stdout, "httpReq: ", log.LstdFlags)
 	logger.Println("Server is starting...")
 
 	router := mux.NewRouter().StrictSlash(true)
@@ -39,6 +40,11 @@ func main() {
 		IdleTimeout:  15 * time.Second,
 	}
 
+	router.PathPrefix("/debug/pprof/profile").HandlerFunc(pprof.Profile)
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	log.Fatal(server.ListenAndServe())
 }
 
