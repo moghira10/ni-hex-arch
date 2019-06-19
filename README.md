@@ -33,4 +33,10 @@ A sample request looks like
  Golang has built in tools for the modern web applications and the capabilities to plug and play external packages makes it extremely powerful language. Much of the work can be done using the standard library, and the rest can utilise the external libraries. However for quicker developement we can alway utilise the pre existing frameworks. Gin and Beego are the popular web frameworks, however for microservices the GoKit is highly recommended framework.
  
  - ### As a team leader, how much estimation you will ask to deliver a fully-fledged component that is ready for deployment to production?
+ Breaking the project into separate tasks,
+ - Setting up project and writing unit tests will take a day
+ - Implementation and testing should take 3 days
+ - Deployment usually takes less than a day however if we have an automated deployment in place, we can reduce the deployment time by several hours.
+
+ Overall a full fleged application with production grade code will take less than 5 days.
  
