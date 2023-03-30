@@ -19,24 +19,3 @@ A sample request looks like
 },
 "checkinTimestamp": "2019-06-17T12:42:31Z"
 }'`
-
-
-- ### How would you route the object to another service\Module? What approach\tools you will be using?
-
- The routing works using the popular gorilla/mux library for multiplexing different request to corresponding handlers. The Checkin object is dispatched to the CheckinHandler to be consumed by the appropriate service.
-  
- - ### What are your concerns about performance and memory usage?
- 
- The major performance bottlenecks are usually high object allocations, high GC latencies, blocking calls. Identifying and fixing these considerably increase performance. 
- 
- - ### What framework(s) you recommend to use?
- Golang has built in tools for the modern web applications and the capabilities to plug and play external packages makes it extremely powerful language. Much of the work can be done using the standard library, and the rest can utilise the external libraries. However for quicker developement we can alway utilise the pre existing frameworks. Gin and Beego are the popular web frameworks, however for microservices the GoKit is highly recommended framework.
- 
- - ### As a team leader, how much estimation you will ask to deliver a fully-fledged component that is ready for deployment to production?
- Breaking the project into separate tasks,
- - Setting up project and writing unit tests will take a day
- - Implementation and testing should take 3 days
- - Deployment usually takes less than a day however if we have an automated deployment in place, we can reduce the deployment time by several hours.
-
- Overall a full fleged application with production grade code will take less than 5 days.
- 
